@@ -1,0 +1,177 @@
+* 3NF (Third Normal Form)
+
+** Definition
+A table is in *Third Normal Form (3NF)* if:
+
+1. It is already in *Second Normal Form (2NF)*, and  
+2. Every *non-key attribute* depends *only on the primary key*,  
+   not on another *non-key attribute*.
+
+🧠 In simple words:
+No field should depend on another field that isn’t a key.
+→ No *transitive dependencies*.
+
+Example of transitive dependency:
+=StudentID → DepartmentID → DepartmentName=
+Here, DepartmentName depends indirectly on StudentID (through DepartmentID).
+
+---
+
+** Example 1: Students and Departments
+
+*** ❌ Not in 3NF
+| StudentID | StudentName | DepartmentID | DepartmentName |
+|------------+--------------+---------------+----------------|
+| 1          | Juan         | D1            | Math           |
+| 2          | María        | D2            | Physics        |
+| 3          | Pablo        | D1            | Math           |
+
+*Primary key:* StudentID
+
+Problem:
+- =DepartmentName= depends on =DepartmentID=, not directly on =StudentID=
+→ Transitive dependency → violates 3NF.
+
+*** ✅ Fixed (3NF)
+Students:
+| StudentID | StudentName | DepartmentID |
+|------------+--------------+---------------|
+| 1          | Juan         | D1            |
+| 2          | María        | D2            |
+| 3          | Pablo        | D1            |
+
+Departments:
+| DepartmentID | DepartmentName |
+|---------------+----------------|
+| D1            | Math           |
+| D2            | Physics        |
+
+---
+
+** Example 2: Employees and Offices
+
+*** ❌ Not in 3NF
+| EmployeeID | EmployeeName | OfficeID | OfficeCity |
+|-------------+---------------+-----------+-------------|
+| 1           | Alice         | 101       | London      |
+| 2           | Bob           | 102       | Madrid      |
+| 3           | Charlie       | 101       | London      |
+
+Problem:
+- =OfficeCity= depends on =OfficeID= (not directly on EmployeeID)
+→ Transitive dependency.
+
+*** ✅ Fixed (3NF)
+Employees:
+| EmployeeID | EmployeeName | OfficeID |
+|-------------+---------------+-----------|
+| 1           | Alice         | 101       |
+| 2           | Bob           | 102       |
+| 3           | Charlie       | 101       |
+
+Offices:
+| OfficeID | OfficeCity |
+|-----------+-------------|
+| 101       | London      |
+| 102       | Madrid      |
+
+---
+
+** Example 3: Orders and Customers
+
+*** ❌ Not in 3NF
+| OrderID | CustomerID | CustomerName | CustomerCity |
+|----------+-------------+---------------+---------------|
+| 1        | C1          | Juan Pérez    | Santiago      |
+| 2        | C2          | María Díaz    | Valparaíso    |
+| 3        | C1          | Juan Pérez    | Santiago      |
+
+Problem:
+- =CustomerName= and =CustomerCity= depend on =CustomerID=, not directly on =OrderID=
+→ Violates 3NF.
+
+*** ✅ Fixed (3NF)
+Orders:
+| OrderID | CustomerID |
+|----------+-------------|
+| 1        | C1          |
+| 2        | C2          |
+| 3        | C1          |
+
+Customers:
+| CustomerID | CustomerName | CustomerCity |
+|-------------+---------------+---------------|
+| C1          | Juan Pérez    | Santiago      |
+| C2          | María Díaz    | Valparaíso    |
+
+---
+
+** Example 4: Products and Categories
+
+*** ❌ Not in 3NF
+| ProductID | ProductName | CategoryID | CategoryName |
+|------------+--------------+-------------+---------------|
+| P1         | Keyboard     | C1          | Peripherals   |
+| P2         | Mouse        | C1          | Peripherals   |
+| P3         | Monitor      | C2          | Displays      |
+
+Problem:
+- =CategoryName= depends on =CategoryID=, not on =ProductID=
+→ Transitive dependency.
+
+*** ✅ Fixed (3NF)
+Products:
+| ProductID | ProductName | CategoryID |
+|------------+--------------+-------------|
+| P1         | Keyboard     | C1          |
+| P2         | Mouse        | C1          |
+| P3         | Monitor      | C2          |
+
+Categories:
+| CategoryID | CategoryName |
+|-------------+---------------|
+| C1          | Peripherals   |
+| C2          | Displays      |
+
+---
+
+** Example 5: Books and Publishers
+
+*** ❌ Not in 3NF
+| BookID | Title        | PublisherID | PublisherName | PublisherCity |
+|--------+---------------+--------------+----------------+----------------|
+| 1      | Database 101  | P1           | Alfa Ed.       | Santiago       |
+| 2      | Networks      | P2           | Beta Books     | Valparaíso     |
+| 3      | Data Science  | P1           | Alfa Ed.       | Santiago       |
+
+Problem:
+- =PublisherName= and =PublisherCity= depend on =PublisherID=, not on =BookID=
+→ Not in 3NF.
+
+*** ✅ Fixed (3NF)
+Books:
+| BookID | Title        | PublisherID |
+|--------+---------------+--------------|
+| 1      | Database 101  | P1           |
+| 2      | Networks      | P2           |
+| 3      | Data Science  | P1           |
+
+Publishers:
+| PublisherID | PublisherName | PublisherCity |
+|--------------+----------------+----------------|
+| P1           | Alfa Ed.       | Santiago       |
+| P2           | Beta Books     | Valparaíso     |
+
+---
+
+** 🧠 Summary (for dummies)
+3NF = 2NF + no transitive dependencies.  
+Every non-key field must depend *only* on the key, not on another field.
+
+Formula:
+If A → B and B → C, then remove C from A’s table.
+
+Example:
+StudentID → DepartmentID → DepartmentName  
+→ Move DepartmentName to a separate Departments table.
+
