@@ -1,0 +1,50 @@
+* 1NF (First Normal Form)
+
+Each field must contain a *single, indivisible value*.
+
+A field may *not* contain:
+- a *set of values* (like a list), or
+- a *nested record* (like an object with multiple fields).
+
+To solve these problems, repeated or complex data should be *moved into a separate table*.
+
+** Not in 1NF
+
+*** Example: field containing a set of values
+| ID | Name      | Phones               |
+|----+-----------+----------------------|
+|  1 | Juan      | 988887777, 977776666 |
+|  2 | Francisco | 922223333            |
+
+In this example, the =Phones= column contains *multiple values in one field*, which violates 1NF.
+
+*** Example: field containing a nested record
+| ID | Name      | Address                                       |
+|----+-----------+-----------------------------------------------|
+|  1 | Juan      | {street: "Mar 123", municipality: "Renca"}    |
+|  2 | Francisco | {street: "Aldo 999", municipality: "Santiago"} |
+
+Here, the =Address= column contains a *record (object)* with multiple fields inside — also not allowed in 1NF.
+
+** In 1NF
+
+*** Persons table
+| ID | Name      |
+|----+-----------|
+|  1 | Juan      |
+|  2 | Francisco |
+
+*** Phones table
+| PersonID | Phone     |
+|-----------+-----------|
+| 1         | 988887777 |
+| 1         | 977776666 |
+| 2         | 922223333 |
+
+Now, every field has a *single value*, and repeating data has been moved into a new table (=Phones=).
+
+This structure satisfies *First Normal Form (1NF)*.
+
+** Summary (for dummies)
+1NF = No repeating groups + no nested records + every field has one value.
+
