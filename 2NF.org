@@ -1,0 +1,193 @@
+* 2NF (Second Normal Form)
+
+** Definition
+A table is in *Second Normal Form (2NF)* if:
+
+1. It is already in *First Normal Form (1NF)*, and  
+2. Every *non-key attribute* depends on the *whole primary key*, not just part of it.
+
+In simple words:
+If a table has a *composite key* (two or more columns as primary key),  
+then all other columns must depend on *both parts* of that key — not just one.
+
+---
+
+** Example 1: Student Courses
+
+*** ❌ Not in 2NF
+| StudentID | CourseID | StudentName | CourseName |
+|------------+-----------+-------------+-------------|
+| 1          | CS101     | Juan        | Databases  |
+| 2          | CS101     | María       | Databases  |
+| 1          | CS102     | Juan        | Networks   |
+
+*Primary key:* (StudentID, CourseID)
+
+Problem:
+- =StudentName= depends only on =StudentID=
+- =CourseName= depends only on =CourseID=
+→ Partial dependencies = not 2NF.
+
+*** ✅ Fixed (2NF)
+Split into separate tables:
+
+Students:
+| StudentID | StudentName |
+|------------+-------------|
+| 1          | Juan        |
+| 2          | María       |
+
+Courses:
+| CourseID | CourseName |
+|-----------+------------|
+| CS101     | Databases  |
+| CS102     | Networks   |
+
+Enrollments (link table):
+| StudentID | CourseID |
+|------------+-----------|
+| 1          | CS101     |
+| 2          | CS101     |
+| 1          | CS102     |
+
+---
+
+** Example 2: Orders and Customers
+
+*** ❌ Not in 2NF
+| OrderID | ProductID | CustomerName | ProductName |
+|----------+------------+--------------+--------------|
+| 1        | P01        | Alice        | Keyboard     |
+| 1        | P02        | Alice        | Mouse        |
+| 2        | P03        | Bob          | Monitor      |
+
+*Primary key:* (OrderID, ProductID)
+
+Problem:
+- =CustomerName= depends only on =OrderID=
+- =ProductName= depends only on =ProductID=
+
+*** ✅ Fixed (2NF)
+Orders:
+| OrderID | CustomerName |
+|----------+--------------|
+| 1        | Alice        |
+| 2        | Bob          |
+
+Products:
+| ProductID | ProductName |
+|------------+--------------|
+| P01        | Keyboard     |
+| P02        | Mouse        |
+| P03        | Monitor      |
+
+OrderDetails:
+| OrderID | ProductID |
+|----------+-----------|
+| 1        | P01       |
+| 1        | P02       |
+| 2        | P03       |
+
+---
+
+** Example 3: Library Borrowing
+
+*** ❌ Not in 2NF
+| MemberID | BookID | MemberName | BookTitle | BorrowDate |
+|-----------+--------+------------+-----------+-------------|
+| 1         | B10    | Juan       | 1984      | 2024-03-01 |
+| 2         | B10    | María      | 1984      | 2024-03-02 |
+
+Problem:
+- =MemberName= depends only on =MemberID=
+- =BookTitle= depends only on =BookID=
+→ Violates 2NF.
+
+*** ✅ Fixed (2NF)
+Members:
+| MemberID | MemberName |
+|-----------+-------------|
+| 1         | Juan        |
+| 2         | María       |
+
+Books:
+| BookID | BookTitle |
+|--------+------------|
+| B10    | 1984       |
+
+Borrowings:
+| MemberID | BookID | BorrowDate |
+|-----------+--------+-------------|
+| 1         | B10    | 2024-03-01 |
+| 2         | B10    | 2024-03-02 |
+
+---
+
+** Example 4: University Professors and Departments
+
+*** ❌ Not in 2NF
+| ProfessorID | DepartmentID | ProfessorName | DepartmentName |
+|--------------+---------------+----------------+----------------|
+| 1            | D01           | Smith          | Physics        |
+| 2            | D02           | Johnson        | Chemistry      |
+| 3            | D01           | Brown          | Physics        |
+
+Problem:
+- =ProfessorName= depends only on =ProfessorID=
+- =DepartmentName= depends only on =DepartmentID=
+
+*** ✅ Fixed (2NF)
+Professors:
+| ProfessorID | ProfessorName | DepartmentID |
+|--------------+----------------+---------------|
+| 1            | Smith          | D01           |
+| 2            | Johnson        | D02           |
+| 3            | Brown          | D01           |
+
+Departments:
+| DepartmentID | DepartmentName |
+|---------------+----------------|
+| D01           | Physics        |
+| D02           | Chemistry      |
+
+---
+
+** Example 5: Products and Suppliers
+
+*** ❌ Not in 2NF
+| SupplierID | ProductID | SupplierName | ProductName | Price |
+|-------------+------------+---------------+--------------+--------|
+| S1          | P1         | Acme Co.      | Keyboard     | 30     |
+| S1          | P2         | Acme Co.      | Mouse        | 20     |
+| S2          | P3         | Beta Ltd.     | Monitor      | 200    |
+
+Problem:
+- =SupplierName= depends only on =SupplierID=
+- =ProductName= depends only on =ProductID=
+
+*** ✅ Fixed (2NF)
+Suppliers:
+| SupplierID | SupplierName |
+|-------------+---------------|
+| S1          | Acme Co.      |
+| S2          | Beta Ltd.     |
+
+Products:
+| ProductID | ProductName | Price |
+|------------+--------------+--------|
+| P1         | Keyboard     | 30     |
+| P2         | Mouse        | 20     |
+| P3         | Monitor      | 200    |
+
+Supply:
+| SupplierID | ProductID |
+|-------------+------------|
+| S1          | P1         |
+| S1          | P2         |
+| S2          | P3         |
+
+---
+
+** 🧠 Summary (for dummies)
+2NF = 1NF + no partial dependency on part of a composite key.
+If some columns depend only on one part of a multi-column key → split into separate tables.
